@@ -1,7 +1,10 @@
 .vscode/
 .DS_Store
 node_modules/
+.husky/
 
+.eslintignore
+yarn.lock
 readme.md
 
 /.cache
