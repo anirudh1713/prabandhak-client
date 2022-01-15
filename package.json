@@ -11,7 +11,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn run format && yarn run lint"
+      "pre-commit": "yarn run lint"
     }
   },
   "dependencies": {
