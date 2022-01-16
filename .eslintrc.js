@@ -4,13 +4,9 @@ module.exports = {
     es2021: true,
   },
   extends: [
-    'eslint:recommended',
     'plugin:react/recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:react-hooks/recommended',
-    'plugin:jsx-a11y/recommended',
+    'airbnb',
     'next/core-web-vitals',
-    'prettier',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -20,6 +16,13 @@ module.exports = {
     ecmaVersion: 13,
     sourceType: 'module',
   },
-  plugins: ['react', '@typescript-eslint', 'react-hooks', 'jsx-a11y'],
-  rules: {},
-}
+  plugins: [
+    'react',
+    '@typescript-eslint',
+  ],
+  rules: {
+    'react/jsx-filename-extension': [2, { extensions: ['.js', '.jsx', '.ts', '.tsx'] }],
+    'react/function-component-definition': 'off',
+    'arrow-body-style': 'warn',
+  },
+};
