@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    /* --color-secondary: #000000;
+    --color-accent-secondary: #14213d;
+    --color-accent-primary: #fca311;
+    --color-fill-primary: #e5e5e5;
+    --color-fill-secondary: #ffffff;
+
+    --color-text-primary: #000000;
+    --color-text-muted: #212529;
+    --color-text-inverted: #fca311; */
+
+    --color-secondary: 0, 0, 0;
+    --color-accent-secondary: 20, 33, 61;
+    --color-accent-primary: 252, 163, 17;
+    --color-fill-primary: 229, 229, 229;
+    --color-fill-secondary: 255, 255, 255;
+
+    --color-text-primary: 0, 0, 0;
+    --color-text-muted: 33, 37, 41;
+    --color-text-inverted: 255, 255, 255;
+  }
+}
+
 html,
 body {
   padding: 0;
