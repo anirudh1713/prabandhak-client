@@ -25,9 +25,10 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
         <input
           id={id}
           className={clsx(
-            { 'ring-red-700': Boolean(error) },
             className,
-            'px-4 py-2 rounded ring-2 ring-gray-200 focus:ring-blue-700 outline-none',
+            'px-4 py-2 rounded ring-2 focus:ring-blue-700 outline-none',
+            { 'ring-gray-200': !error },
+            { 'ring-red-700': Boolean(error) },
           )}
           ref={ref}
           {...rest}
