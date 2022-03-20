@@ -28,7 +28,7 @@ const Register: NextPage = () => {
   });
 
   return (
-    <div className="h-screen w-full bg-white grid grid-cols-2">
+    <div className="h-screen w-full bg-white grid grid-cols-1 md:grid-cols-2">
       <div className="flex items-center justify-center">
         <div className="flex flex-col mx-20 space-y-5">
           <header>
@@ -85,7 +85,7 @@ const Register: NextPage = () => {
           </span>
         </div>
       </div>
-      <div className="bg-[length:400%_400%] bg-gradient-to-l from-sky-400 to-indigo-900 animate-gradient-flow" />
+      <div className="bg-[length:400%_400%] bg-gradient-to-l from-sky-400 to-indigo-900 animate-gradient-flow hidden md:block" />
     </div>
   );
 };
