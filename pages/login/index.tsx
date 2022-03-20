@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Link from 'next/link';
 import { BsArrowRight } from 'react-icons/bs';
+import axios from '../../lib/axios';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 
@@ -21,8 +22,10 @@ const Login: NextPage = () => {
   });
 
   // eslint-disable-next-line no-unused-vars
-  const onSubmit = handleSubmit((data) => {
-    // TODO - Send login API request.
+  const onSubmit = handleSubmit(async (data) => {
+    await axios.post('/auth/login', {
+      ...data,
+    });
   });
 
   return (
