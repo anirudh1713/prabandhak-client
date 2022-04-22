@@ -105,17 +105,17 @@ const Login: NextPage = () => {
 
 export default Login;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async context => {
   if (context.req.cookies.refresh) {
     return {
       redirect: {
         destination: '/',
         permanent: false,
-      }
-    }
+      },
+    };
   }
 
   return {
     props: {},
-  }
-}
+  };
+};

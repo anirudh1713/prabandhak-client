@@ -1,7 +1,6 @@
-/* eslint-disable no-nested-ternary */
 import {AxiosError} from 'axios';
 import {useRouter} from 'next/router';
-import {createContext, useContext,  useMemo, useReducer} from 'react';
+import {createContext, useContext, useMemo, useReducer} from 'react';
 import {useQuery} from 'react-query';
 import FullScreenLoader from '../../components/LoadingIndicator/FullScreenLoader';
 import {authAPI} from '../api';
@@ -73,16 +72,18 @@ export const UserProvider = ({children}: IProviderProps) => {
   }, [state]);
 
   if (isLoading) {
-    return <FullScreenLoader />
-  } 
+    return <FullScreenLoader />;
+  }
 
-  if (error && (!router.pathname.includes('login') && !router.pathname.includes('register'))) {
+  if (
+    error &&
+    !router.pathname.includes('login') &&
+    !router.pathname.includes('register')
+  ) {
     router.replace('/login');
   }
 
-  return (
-    <UserContext.Provider value={value}>{children}</UserContext.Provider>
-  );
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
 
 export const useUser = () => {

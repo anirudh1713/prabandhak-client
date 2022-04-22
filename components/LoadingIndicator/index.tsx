@@ -5,7 +5,7 @@ interface Props {
   size?: number;
 }
 
-const index = ({ size = 20 }: Props) => {
+const index = ({size = 20}: Props) => {
   return <RiLoader3Line size={size} className="animate-spin" />;
 };
 

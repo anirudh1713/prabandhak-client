@@ -1,3 +1,4 @@
 export const config = {
-  apiEndpoint: process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3001/v1',
+  apiEndpoint:
+    process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3001/v1',
 };

@@ -1,11 +1,11 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import type { NextPage } from 'next';
+import type {NextPage} from 'next';
 import React from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {useForm} from 'react-hook-form';
+import {z} from 'zod';
 import Link from 'next/link';
-import { BsArrowRight } from 'react-icons/bs';
+import {BsArrowRight} from 'react-icons/bs';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
@@ -14,10 +14,14 @@ const registerFormSchema = z.object({
   email: z.string().email(),
   password: z.string().nonempty(),
 });
-type RegisterFormData = z.infer<typeof registerFormSchema>
+type RegisterFormData = z.infer<typeof registerFormSchema>;
 
 const Register: NextPage = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: {errors},
+  } = useForm<RegisterFormData>({
     resolver: zodResolver(registerFormSchema),
     reValidateMode: 'onChange',
   });
@@ -34,9 +38,7 @@ const Register: NextPage = () => {
           <header>
             <h1 className="text-5xl font-extrabold mb-8 flex flex-col">
               <span>Create your</span>
-              <span>
-                Account
-              </span>
+              <span>Account</span>
             </h1>
           </header>
           <form
@@ -74,8 +76,7 @@ const Register: NextPage = () => {
             </Button>
           </form>
           <span className="text-base text-gray-600">
-            Already have an account?
-            {' '}
+            Already have an account?{' '}
             <Link href="/login">
               {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               <a className="font-semibold text-blue-600 hover:underline hover:underline-offset-2">

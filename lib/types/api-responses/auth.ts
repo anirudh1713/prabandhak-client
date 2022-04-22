@@ -1,5 +1,5 @@
-import { IBaseToken } from "../models/token";
-import { IUser } from "../models/user";
+import {IBaseToken} from '../models/token';
+import {IUser} from '../models/user';
 
 // TODO - Rethink this as tokens are now being handled by cookies.
 export interface ITokenResponse {
@@ -9,8 +9,8 @@ export interface ITokenResponse {
 
 export interface ILoginUserResponse {
   user: IUser;
-  tokens: ITokenResponse; 
-};
+  tokens: ITokenResponse;
+}
 
 export interface IRegisterUserResponse {
   user: IUser;

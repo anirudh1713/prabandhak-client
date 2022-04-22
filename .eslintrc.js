@@ -17,10 +17,7 @@ module.exports = {
     ecmaVersion: 13,
     sourceType: 'module',
   },
-  plugins: [
-    'react',
-    '@typescript-eslint',
-  ],
+  plugins: ['react', '@typescript-eslint'],
   overrides: [
     {
       files: ['*.ts', '*.tsx'],
@@ -30,7 +27,10 @@ module.exports = {
     },
   ],
   rules: {
-    'react/jsx-filename-extension': [2, { extensions: ['.js', '.jsx', '.ts', '.tsx'] }],
+    'react/jsx-filename-extension': [
+      2,
+      {extensions: ['.js', '.jsx', '.ts', '.tsx']},
+    ],
     'react/function-component-definition': 'off',
     'react/jsx-props-no-spreading': 'warn',
     'react/prop-types': 'off', // Since we do not use prop-types
@@ -47,7 +47,7 @@ module.exports = {
         tsx: 'never',
       },
     ],
-    "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": ["error"]
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': ['error'],
   },
 };
