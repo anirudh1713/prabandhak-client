@@ -1,0 +1,11 @@
+.vscode/
+.DS_Store
+.next/
+.husky/
+node_modules/
+
+/.cache
+/build
+/public
+
+/styles

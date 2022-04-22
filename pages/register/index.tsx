@@ -23,7 +23,7 @@ const Register: NextPage = () => {
   });
 
   // eslint-disable-next-line no-unused-vars
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(() => {
     // TODO - Call register API
   });
 

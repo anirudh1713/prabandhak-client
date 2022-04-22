@@ -1,20 +1,12 @@
-import type { NextPage } from 'next';
-import axios from '../lib/axios';
+import type {NextPage} from 'next';
+import {useUser} from '../lib/contexts/user-context';
 
 const Home: NextPage = () => {
-  return (
-    <div>
-      Prabandhak
-      <button
-        type="button"
-        onClick={async () => {
-          await axios.get('/auth/test');
-        }}
-      >
-        click
-      </button>
-    </div>
-  );
+  const {
+    userState: {user},
+  } = useUser();
+
+  return <div>Welcome to Prabandhak, {user?.name}</div>;
 };
 
 export default Home;

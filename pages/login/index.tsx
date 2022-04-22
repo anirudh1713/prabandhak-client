@@ -1,31 +1,43 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import type { NextPage } from 'next';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import type {GetServerSideProps, NextPage} from 'next';
+import {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { BsArrowRight } from 'react-icons/bs';
-import axios from '../../lib/axios';
+import {BsArrowRight} from 'react-icons/bs';
+import {toast} from 'react-toastify';
+import {useRouter} from 'next/router';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
-
-const loginFormSchema = z.object({
-  email: z.string().email(),
-  password: z.string().nonempty(),
-});
-type LoginFormData = z.infer<typeof loginFormSchema>
+import {TLoginFormData, loginFormSchema} from '../../lib/schemas/auth';
+import {useUser} from '../../lib/contexts/user-context';
 
 const Login: NextPage = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
+  const router = useRouter();
+  const {loginUser} = useUser();
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: {errors},
+  } = useForm<TLoginFormData>({
     resolver: zodResolver(loginFormSchema),
     reValidateMode: 'onChange',
   });
 
-  // eslint-disable-next-line no-unused-vars
-  const onSubmit = handleSubmit(async (data) => {
-    await axios.post('/auth/login', {
-      ...data,
-    });
+  const onSubmit = handleSubmit(async data => {
+    // Using useMutation of react-query, this will call onSuccess or onError above.
+    setIsLoggingIn(true);
+    try {
+      await loginUser({...data});
+      router.push('/');
+    } catch (error: any) {
+      const message = error.response?.data.message || 'Something went wrong.';
+      toast.error(message);
+    } finally {
+      setIsLoggingIn(false);
+    }
   });
 
   return (
@@ -36,9 +48,7 @@ const Login: NextPage = () => {
             <h1 className="text-5xl font-extrabold mb-8 flex flex-col">
               <span>Welcome back</span>
               <span>
-                to
-                {' '}
-                <span className="text-blue-700">Prabandhak</span>
+                to <span className="text-blue-700">Prabandhak</span>
               </span>
             </h1>
             <h5 className="text-lg text-gray-600">Sign in to your account.</h5>
@@ -64,19 +74,21 @@ const Login: NextPage = () => {
               />
               <Link href="/forgot-password">
                 {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                <a className="w-max text-base text-gray-600 underline underline-offset-2">Forgot password?</a>
+                <a className="w-max text-base text-gray-600 underline underline-offset-2">
+                  Forgot password?
+                </a>
               </Link>
             </div>
             <Button
               type="submit"
+              isLoading={isLoggingIn}
               rightIcon={<BsArrowRight className="w-5 h-5" />}
             >
               Sign in
             </Button>
           </form>
           <span className="text-base text-gray-600">
-            Don&apos;t have an account?
-            {' '}
+            Don&apos;t have an account?{' '}
             <Link href="/register">
               {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               <a className="font-semibold text-blue-600 hover:underline hover:underline-offset-2">
@@ -92,3 +104,18 @@ const Login: NextPage = () => {
 };
 
 export default Login;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  if (context.req.cookies.refresh) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      }
+    }
+  }
+
+  return {
+    props: {},
+  }
+}

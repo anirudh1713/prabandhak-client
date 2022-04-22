@@ -1,41 +1,43 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/button-has-type */
-import React from 'react';
+import React, {useMemo} from 'react';
 import clsx from 'clsx';
+import LoadingIndicator from '../LoadingIndicator';
 
-type Theme =
-  'primary';
+type Theme = 'primary';
 
 interface IButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   theme?: Theme;
   rightIcon?: JSX.Element;
+  isLoading?: boolean;
 }
 
 const Button = ({
-  children, className, rightIcon, ...rest
+  children,
+  className,
+  rightIcon,
+  isLoading = false,
+  ...rest
 }: IButtonProps) => {
+  // * useMemo is probably overkill here.
+  const icon = useMemo(() => {
+    if (isLoading) return <LoadingIndicator />;
+    return rightIcon;
+  }, [isLoading, rightIcon]);
+
   return (
     <button
       className={clsx(
         className,
-        'relative inline-flex items-center px-8 py-3 overflow-hidden text-white bg-blue-700 rounded group active:bg-blue-600 focus:outline-none focus:ring',
+        'flex items-center space-x-4 px-8 py-3 overflow-hidden text-white bg-blue-700 rounded group active:bg-blue-600 focus:outline-none focus:ring',
+        {'opacity-80': isLoading},
       )}
+      disabled={isLoading}
       {...rest}
     >
-      {rightIcon ? (
-        <span className="absolute right-0 transition-transform translate-x-full group-hover:-translate-x-4">
-          {rightIcon}
-        </span>
-      ) : null}
+      <span className="text-base font-medium">{children}</span>
 
-      <span
-        className={clsx(
-          'text-base font-medium transition-all',
-          { 'group-hover:mr-4': rightIcon },
-        )}
-      >
-        {children}
-      </span>
+      {icon ? <span>{icon}</span> : null}
     </button>
   );
 };
