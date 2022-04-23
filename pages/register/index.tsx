@@ -1,34 +1,49 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import type {NextPage} from 'next';
+import {useRouter} from 'next/router';
 import React from 'react';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useForm} from 'react-hook-form';
-import {z} from 'zod';
 import Link from 'next/link';
+import {toast} from 'react-toastify';
+import {AxiosError} from 'axios';
 import {BsArrowRight} from 'react-icons/bs';
+import {useMutation} from 'react-query';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
-
-const registerFormSchema = z.object({
-  fullName: z.string().nonempty(),
-  email: z.string().email(),
-  password: z.string().nonempty(),
-});
-type RegisterFormData = z.infer<typeof registerFormSchema>;
+import {registerFormSchema, TRegisterFormData} from '../../lib/schemas/auth';
+import {IRegisterUserResponse} from '../../lib/types/api-responses/auth';
+import {IAPIError} from '../../lib/types/api-responses/error';
+import {authAPI} from '../../lib/api';
 
 const Register: NextPage = () => {
+  const router = useRouter();
+
+  const {isLoading, mutate} = useMutation<
+    IRegisterUserResponse,
+    AxiosError<IAPIError>,
+    TRegisterFormData
+  >('register', authAPI.registerUser, {
+    onSuccess: () => {
+      router.push('/');
+    },
+    onError: error => {
+      const message = error.response?.data.message || 'Something went wrong';
+      toast.error(message);
+    },
+  });
+
   const {
     register,
     handleSubmit,
     formState: {errors},
-  } = useForm<RegisterFormData>({
+  } = useForm<TRegisterFormData>({
     resolver: zodResolver(registerFormSchema),
     reValidateMode: 'onChange',
   });
 
-  // eslint-disable-next-line no-unused-vars
-  const onSubmit = handleSubmit(() => {
-    // TODO - Call register API
+  const onSubmit = handleSubmit(async data => {
+    mutate(data);
   });
 
   return (
@@ -50,8 +65,8 @@ const Register: NextPage = () => {
                 type="text"
                 placeholder="Full Name"
                 label="Full Name"
-                {...register('fullName')}
-                error={errors.fullName?.message}
+                {...register('name')}
+                error={errors.name?.message}
               />
               <Input
                 type="email"
@@ -71,6 +86,7 @@ const Register: NextPage = () => {
             <Button
               type="submit"
               rightIcon={<BsArrowRight className="w-5 h-5" />}
+              isLoading={isLoading}
             >
               Register
             </Button>

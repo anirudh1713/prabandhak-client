@@ -1,5 +1,5 @@
 import {request} from '../../axios';
-import {TLoginFormData} from '../../schemas/auth';
+import {TLoginFormData, TRegisterFormData} from '../../schemas/auth';
 import {
   IGetMeResponse,
   ILoginUserResponse,
@@ -10,6 +10,17 @@ const BASE_AUTH_ENDPOINT = '/auth';
 export const loginUser = async (data: TLoginFormData) => {
   const res = await request.post<ILoginUserResponse>(
     `${BASE_AUTH_ENDPOINT}/login`,
+    {
+      ...data,
+    },
+  );
+
+  return res.data;
+};
+
+export const registerUser = async (data: TRegisterFormData) => {
+  const res = await request.post<ILoginUserResponse>(
+    `${BASE_AUTH_ENDPOINT}/register`,
     {
       ...data,
     },

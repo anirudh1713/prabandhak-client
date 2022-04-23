@@ -7,7 +7,7 @@ export const loginFormSchema = z.object({
 export type TLoginFormData = z.infer<typeof loginFormSchema>;
 
 export const registerFormSchema = z.object({
-  fullName: z.string().nonempty(),
+  name: z.string().nonempty(),
   email: z.string().email(),
   password: z.string().nonempty(),
 });
