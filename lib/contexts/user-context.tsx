@@ -1,17 +1,11 @@
-import {AxiosError} from 'axios';
-import {useRouter} from 'next/router';
-import {createContext, useContext, useMemo, useReducer} from 'react';
-import {useQuery} from 'react-query';
+import {createContext, useContext, useEffect, useMemo, useReducer} from 'react';
 import FullScreenLoader from '../../components/LoadingIndicator/FullScreenLoader';
 import {authAPI} from '../api';
-import {getMe} from '../api/auth';
-import {TLoginFormData} from '../schemas/auth';
-import {IGetMeResponse} from '../types/api-responses/auth';
-import {IAPIError} from '../types/api-responses/error';
 import {
   IUserContext,
   IUserState,
-  USER_REDUCER_ACTIONTYPES,
+  STATUSES,
+  USER_REDUCER_ACTION_TYPES,
 } from '../types/user-context';
 
 interface IProviderProps {
@@ -24,66 +18,72 @@ const UserContext = createContext<IUserContext | undefined>(undefined);
 const initialState: IUserState = {
   user: undefined,
   isLoggedIn: false,
+  /**
+   * Assume user is authenticated initially,
+   * as we're fetching user data in useUser hook so it'll handle the other cases
+   */
+  status: STATUSES.AUTHENTICATED,
 };
 const userReducer = (
   state: IUserState,
-  action: USER_REDUCER_ACTIONTYPES,
+  action: USER_REDUCER_ACTION_TYPES,
 ): IUserState => {
   switch (action.type) {
+    case 'GET_USER':
+      return {...state, status: STATUSES.LOADING};
+
     case 'SET_USER':
-      return {...state, user: {...action.payload}, isLoggedIn: true};
+      return {
+        user: {...action.payload},
+        isLoggedIn: true,
+        status: STATUSES.AUTHENTICATED,
+      };
+
+    case 'SET_ERROR':
+      return {...state, status: STATUSES.UNAUTHENTICATED};
 
     case 'RESET':
-      return {user: undefined, isLoggedIn: false};
+      return {...initialState};
 
     default:
       return state;
   }
 };
 
+// User Provider
 export const UserProvider = ({children}: IProviderProps) => {
-  const router = useRouter();
   const [state, dispatch] = useReducer(userReducer, initialState);
-
-  const {isLoading, error} = useQuery<IGetMeResponse, AxiosError<IAPIError>>(
-    '/me',
-    getMe,
-    {
-      onSuccess: data => {
-        dispatch({type: 'SET_USER', payload: data.user});
-      },
-      retry: false,
-      refetchOnWindowFocus: false,
-    },
-  );
-
-  const loginUser = async (data: TLoginFormData) => {
-    const res = await authAPI.loginUser(data);
-    dispatch({type: 'SET_USER', payload: res.user});
-    return res;
-  };
 
   const value: IUserContext = useMemo(() => {
     return {
       userState: state,
       userDispatch: dispatch,
-      loginUser,
     };
   }, [state]);
 
-  if (isLoading) {
+  // Show full screen loader.
+  if (state.status === STATUSES.LOADING) {
     return <FullScreenLoader />;
   }
 
-  if (
-    error &&
-    !router.pathname.includes('login') &&
-    !router.pathname.includes('register')
-  ) {
-    router.replace('/login');
+  // Show full screen error message.
+  if (state.status === STATUSES.UNAUTHENTICATED) {
+    return (
+      <div className="text-red-600">
+        <div>You need to login again</div>
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+        <a href="/login">Login Now</a>
+      </div>
+    );
   }
 
-  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+  if (state.status === STATUSES.AUTHENTICATED) {
+    return (
+      <UserContext.Provider value={value}>{children}</UserContext.Provider>
+    );
+  }
+
+  throw new Error(`Unhandled (invalid) status: ${state.status}`);
 };
 
 export const useUser = () => {
@@ -91,5 +91,20 @@ export const useUser = () => {
   if (context === undefined) {
     throw new Error('useUser must be used within a UserProvider');
   }
+
+  useEffect(() => {
+    if (!context.userState.user) {
+      context.userDispatch({type: 'GET_USER'});
+      authAPI
+        .getMe()
+        .then(data => {
+          context.userDispatch({type: 'SET_USER', payload: data.user});
+        })
+        .catch(() => {
+          context.userDispatch({type: 'SET_ERROR'});
+        });
+    }
+  }, [context]);
+
   return context;
 };

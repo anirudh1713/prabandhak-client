@@ -1,21 +1,36 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import type {GetServerSideProps, NextPage} from 'next';
-import {useState} from 'react';
+import type {NextPage} from 'next';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import {BsArrowRight} from 'react-icons/bs';
 import {toast} from 'react-toastify';
+import {AxiosError} from 'axios';
 import {useRouter} from 'next/router';
+import {useMutation} from 'react-query';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import {TLoginFormData, loginFormSchema} from '../../lib/schemas/auth';
-import {useUser} from '../../lib/contexts/user-context';
+import {authAPI} from '../../lib/api';
+import {IAPIError} from '../../lib/types/api-responses/error';
+import {ILoginUserResponse} from '../../lib/types/api-responses/auth';
 
 const Login: NextPage = () => {
   const router = useRouter();
-  const {loginUser} = useUser();
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  const {isLoading, mutate} = useMutation<
+    ILoginUserResponse,
+    AxiosError<IAPIError>,
+    TLoginFormData
+  >('login', authAPI.loginUser, {
+    onSuccess: () => {
+      router.push('/');
+    },
+    onError: error => {
+      const message = error.response?.data.message || 'Something went wrong';
+      toast.error(message);
+    },
+  });
 
   const {
     register,
@@ -27,17 +42,7 @@ const Login: NextPage = () => {
   });
 
   const onSubmit = handleSubmit(async data => {
-    // Using useMutation of react-query, this will call onSuccess or onError above.
-    setIsLoggingIn(true);
-    try {
-      await loginUser({...data});
-      router.push('/');
-    } catch (error: any) {
-      const message = error.response?.data.message || 'Something went wrong.';
-      toast.error(message);
-    } finally {
-      setIsLoggingIn(false);
-    }
+    mutate(data);
   });
 
   return (
@@ -81,7 +86,7 @@ const Login: NextPage = () => {
             </div>
             <Button
               type="submit"
-              isLoading={isLoggingIn}
+              isLoading={isLoading}
               rightIcon={<BsArrowRight className="w-5 h-5" />}
             >
               Sign in
@@ -104,18 +109,3 @@ const Login: NextPage = () => {
 };
 
 export default Login;
-
-export const getServerSideProps: GetServerSideProps = async context => {
-  if (context.req.cookies.refresh) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};
