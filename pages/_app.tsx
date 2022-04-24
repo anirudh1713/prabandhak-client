@@ -11,7 +11,7 @@ function MyApp({Component, pageProps}: AppProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <UserProvider>
+      <UserProvider user={pageProps.user}>
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <Component {...pageProps} />
       </UserProvider>

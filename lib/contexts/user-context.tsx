@@ -1,6 +1,7 @@
 import {createContext, useContext, useEffect, useMemo, useReducer} from 'react';
 import FullScreenLoader from '../../components/LoadingIndicator/FullScreenLoader';
 import {authAPI} from '../api';
+import {IUser} from '../types/models/user';
 import {
   IUserContext,
   IUserState,
@@ -10,6 +11,7 @@ import {
 
 interface IProviderProps {
   children: JSX.Element;
+  user?: IUser;
 }
 
 const UserContext = createContext<IUserContext | undefined>(undefined);
@@ -51,8 +53,12 @@ const userReducer = (
 };
 
 // User Provider
-export const UserProvider = ({children}: IProviderProps) => {
-  const [state, dispatch] = useReducer(userReducer, initialState);
+export const UserProvider = ({children, user}: IProviderProps) => {
+  const [state, dispatch] = useReducer(userReducer, {
+    ...initialState,
+    user,
+    isLoggedIn: !!user,
+  });
 
   const value: IUserContext = useMemo(() => {
     return {
