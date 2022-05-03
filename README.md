@@ -1,3 +1,16 @@
+## Prerequisites
+
+- node (V16 recommended)
+- yarn
+  - run `npm install --global yarn` to install yarn globally.
+
+## Setup Instructions
+
+- run `yarn` to install project dependencies
+- copy `.example.env.local` to `.env.local`
+  - make sure to check the values
+- run `yarn dev` to start the development server
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
